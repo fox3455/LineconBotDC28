@@ -1,0 +1,16 @@
+{
+  "name": "LineconBotDC28",
+  "version": "0.0.2",
+  "description": "A fun bot for the DEF CON 28 discord server",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --trace-warnings ./src/index.js"
+  },
+  "keywords": [],
+  "author": "Alex 'technicolor', Fox3411 ",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
+}
