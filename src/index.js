@@ -13,7 +13,7 @@ const client = new Discord.Client();
 
 // Filter for filtering out only the beach ball emote
 const filter = (reaction) => {
-	return reaction.emoji.name === '739737953181630584';
+	return reaction.emoji.id === '739737953181630584';
 };
 
 client.on('ready', () => {
@@ -28,19 +28,41 @@ client.on('ready', () => {
 			name: `with beachballs`,
 			type: 'PLAYING',
 		},
-		status: 'dnd',
+		status: 'idle',
 	}).then(() => {
 	});
 
 })
 
+
 client.on('message', async message => {
-	if ((message.channel === 710574818222931968)) return;
-	//Game function
-	if (message.content === '!play') {
-		message.reply("Who wants to play with the beach ball?").then(() => {
-			message.react('739737953181630584')
-		})
+	// Message processing
+
+	// Only can be used in #linecon
+	// if (!(message.channel === client.channels.cache.get("710574818222931968"))) return;
+
+	// Discards messages from bots
+	if (message.author.bot) return;
+
+	// Discards messages that dont being with the prefix
+	if (message.content.indexOf(config.prefix) !== 0) return;
+
+	// Makes the message into an array then cuts off the beginning and puts it in the command variable
+	const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+	const command = args.shift().toLowerCase();
+
+	// The main function of this bot. To play games!
+	if (command === 'play') {
+
+		const emote = client.emojis.cache.get(config.emoteID)
+
+		message.channel.send("Who wants to play with the beach ball?")
+			.then(() => {
+				message.react(config.emoteID)
+					.catch((err) => {
+						console.error('Something went wrong', err)
+					})
+			})
 			.catch((err) => {
 					console.error("Something went wrong!", err)
 					return message.channel.send("Something went wrong..."
@@ -52,24 +74,36 @@ client.on('message', async message => {
 		message.awaitReactions(filter, {max: 1, time: 60000, errors: ['time']})
 			.then(collected => {
 				const reaction = collected.first();
-				if (reaction.emoji === filter) {
+				if (reaction.emoji === emote) {
 					players = reaction.users;
 				}
 			})
+
 		//This will start passing the ball
-		let ball = await message.reply("<:BeachBall1:737676787823411230> <@" + value + ">") + message.react('737676787823411230')
+
+		function ball(message) {
+			message.reply("<:BeachBall1:737676787823411230> <@" + value + ">")
+				.then(() => {
+					message.react('737676787823411230')
+				})
+				.catch((err) => {
+					console.error("something went wrong!", err)
+					return message.channel.send("Something went wrong... I couldn't react.")
+				})
+		}
 
 		message.reply("Let's start!").then(() => {
 		})
 		message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
 			.then(collected => {
 				const reaction = collected.first();
-				if (reaction.emoji === message.guild.cache.find(emoji => emoji.id('737676787823411230'))) {
+				if (reaction.emoji === client.emojis.cache.get('737676787823411230')) {
 
 				}
 			})
 	}
-
 });
 
-client.login(config.token);
+client.login(config.token).then(() => {
+	console.log("Bot is logged in!")
+});

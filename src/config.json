@@ -1,3 +1,5 @@
 {
-  "token": "this is not a token"
+  "token": "THIS IS NOT A TOKEN",
+  "prefix": "//",
+  "emoteID": "739941658639990866"
 }
