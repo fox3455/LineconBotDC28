@@ -8,7 +8,7 @@
     "start": "node --trace-warnings ./src/index.js"
   },
   "keywords": [],
-  "author": "Alex 'technicolor', Fox3455, DeviousComputer",
+  "author": "Technically, Fox3455, DeviousComputer",
   "license": "MIT",
   "dependencies": {
     "discord.js": "^12.2.0"
