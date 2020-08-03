@@ -1,5 +1,5 @@
 {
-  "name": "LineconBotDC28",
+  "name": "linecon-bot",
   "version": "0.0.2",
   "description": "A fun bot for the DEF CON 28 discord server",
   "main": "src/index.js",
