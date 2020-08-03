@@ -59,9 +59,18 @@ client.on('message', async message => {
 
 		message.channel.send("Who wants to play with the beach ball?")
 			.then(message => {
+				// Reacts to its own message
 				message.react(config.emoteID)
 					.catch((err) => {
 						console.error('Something went wrong', err)
+					})
+
+				message.awaitReactions(filter, {max: 25, time: 60000, errors: ['time']})
+					.then(collected => {
+						const reaction = collected.first();
+						if (reaction.emoji === emote) {
+							players = reaction.users;
+						}
 					})
 			})
 			.catch((err) => {
@@ -70,15 +79,9 @@ client.on('message', async message => {
 					)
 				}
 			)
-		;
+
 		// going to change this to an on. statement and try making it more "JS" I think I see where you are going.
-		message.awaitReactions(filter, {max: 1, time: 60000, errors: ['time']})
-			.then(collected => {
-				const reaction = collected.first();
-				if (reaction.emoji === emote) {
-					players = reaction.users;
-				}
-			})
+
 
 		//This will start passing the ball
 
