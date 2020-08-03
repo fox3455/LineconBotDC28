@@ -13,7 +13,7 @@ const client = new Discord.Client();
 
 // Filter for filtering out only the beach ball emote
 const filter = (reaction) => {
-	return reaction.emoji.id === '739737953181630584';
+	return reaction.emoji.id === config.emoteID;
 };
 
 client.on('ready', () => {
