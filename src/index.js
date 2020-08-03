@@ -39,7 +39,8 @@ client.on('message', async message => {
 	// Message processing
 
 	// Only can be used in #linecon
-	// if (!(message.channel === client.channels.cache.get("710574818222931968"))) return;
+	// let okchannel = client.channels.cache.get("710574818222931968")
+	// if (!(message.channel === okchannel)) return;
 
 	// Discards messages from bots
 	if (message.author.bot) return;
@@ -57,7 +58,7 @@ client.on('message', async message => {
 		const emote = client.emojis.cache.get(config.emoteID)
 
 		message.channel.send("Who wants to play with the beach ball?")
-			.then(() => {
+			.then(message => {
 				message.react(config.emoteID)
 					.catch((err) => {
 						console.error('Something went wrong', err)
@@ -82,9 +83,9 @@ client.on('message', async message => {
 		//This will start passing the ball
 
 		function ball(message) {
-			message.reply("<:BeachBall1:737676787823411230> <@" + value + ">")
+			message.reply(`${emote} ${value}`)
 				.then(() => {
-					message.react('737676787823411230')
+					message.react('config.emoteID')
 				})
 				.catch((err) => {
 					console.error("something went wrong!", err)
@@ -97,7 +98,7 @@ client.on('message', async message => {
 		message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
 			.then(collected => {
 				const reaction = collected.first();
-				if (reaction.emoji === client.emojis.cache.get('737676787823411230')) {
+				if (reaction.emoji === client.emojis.cache.get(config.emoteID)) {
 
 				}
 			})
