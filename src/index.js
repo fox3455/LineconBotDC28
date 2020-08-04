@@ -65,7 +65,7 @@ client.on('message', async message => {
 						console.error('Something went wrong', err)
 					})
 
-				message.awaitReactions(filter, {max: 25, time: 60000, errors: ['time']})
+				message.awaitReactions((reaction) => reaction.emoji.id === config.emoteID, {max: 25, time: 60000, errors: ['time']})
 					.then(collected => {
 						const reaction = collected.first();
 						if (reaction.emoji === emote) {
@@ -80,11 +80,7 @@ client.on('message', async message => {
 				}
 			)
 
-		// going to change this to an on. statement and try making it more "JS" I think I see where you are going.
-
-
-		//This will start passing the ball
-
+		// This will start passing the ball
 		function ball(message) {
 			message.reply(`${emote} ${value}`)
 				.then(() => {
@@ -96,15 +92,19 @@ client.on('message', async message => {
 				})
 		}
 
-		message.reply("Let's start!").then(() => {
-		})
-		message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
-			.then(collected => {
-				const reaction = collected.first();
-				if (reaction.emoji === client.emojis.cache.get(config.emoteID)) {
+		// This starts the game I guess
+		setTimeout(function () {
+			message.reply("Let's start!").then(message => {
+				message.react(config.emoteID)
+				message.awaitReactions((reaction, user) => user.id === message.member.id && reaction.emoji.id === config.emoteID, { max: 1, time: 30000 })
+			.then( collected => {
+					if (collected.first().emoji.id === config.emoteID) {
+						ball()
+					}
+				})
 
-				}
 			})
+		}, 10000)
 	}
 });
 
