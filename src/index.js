@@ -65,7 +65,7 @@ client.on('message', async message => {
 						console.error('Something went wrong', err)
 					})
 
-				message.awaitReactions((reaction) => reaction.emoji.id === config.emoteID, {max: 25, time: 60000, errors: ['time']})
+				message.awaitReactions(filter, {max: 25, time: 60000, errors: ['time']})
 					.then(collected => {
 						const reaction = collected.first();
 						if (reaction.emoji === emote) {
@@ -80,7 +80,11 @@ client.on('message', async message => {
 				}
 			)
 
-		// This will start passing the ball
+		// going to change this to an on. statement and try making it more "JS" I think I see where you are going.
+
+
+		//This will start passing the ball
+
 		function ball(message) {
 			message.reply(`${emote} ${value}`)
 				.then(() => {
@@ -92,19 +96,25 @@ client.on('message', async message => {
 				})
 		}
 
-		// This starts the game I guess
-		setTimeout(function () {
-			message.reply("Let's start!").then(message => {
-				message.react(config.emoteID)
-				message.awaitReactions((reaction, user) => user.id === message.member.id && reaction.emoji.id === config.emoteID, { max: 1, time: 30000 })
-			.then( collected => {
-					if (collected.first().emoji.id === config.emoteID) {
-						ball()
-					}
-				})
+		//message.reply should start the game and call the first user based on the
+		//random user generator from our array
+		message.reply("Let's start! <@" + value + ">").then(() => {
+		})
+		message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
+			.then(collected => {
+				const reaction = collected.first();
+				//VERY rough while statement should maybe work...? Need to update the bot and see
+				//what happens when it runs since I don't write in JS
+				while True:
+		    	if (reaction.emoji === client.emojis.cache.get(config.emoteID)):
+		      	message.reply("Let's start! <@" + value + ">")
+		      	.then(() => {
+			      message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
+		    	}
 
+		    else:
+		      break
 			})
-		}, 10000)
 	}
 });
 
