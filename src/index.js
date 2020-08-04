@@ -96,14 +96,24 @@ client.on('message', async message => {
 				})
 		}
 
-		message.reply("Let's start!").then(() => {
+		//message.reply should start the game and call the first user based on the
+		//random user generator from our array
+		message.reply("Let's start! <@" + value + ">").then(() => {
 		})
 		message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
 			.then(collected => {
 				const reaction = collected.first();
-				if (reaction.emoji === client.emojis.cache.get(config.emoteID)) {
+				//VERY rough while statement should maybe work...? Need to update the bot and see
+				//what happens when it runs since I don't write in JS
+				while True:
+		    	if (reaction.emoji === client.emojis.cache.get(config.emoteID)):
+		      	message.reply("Let's start! <@" + value + ">")
+		      	.then(() => {
+			      message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
+		    	}
 
-				}
+		    else:
+		      break
 			})
 	}
 });
