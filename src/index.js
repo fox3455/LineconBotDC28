@@ -105,15 +105,17 @@ client.on('message', async message => {
 				const reaction = collected.first();
 				//VERY rough while statement should maybe work...? Need to update the bot and see
 				//what happens when it runs since I don't write in JS
-				while True:
-		    	if (reaction.emoji === client.emojis.cache.get(config.emoteID)):
-		      	message.reply("Let's start! <@" + value + ">")
-		      	.then(() => {
-			      message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
-		    	}
+				while (1) {
+					if (reaction.emoji === client.emojis.cache.get(config.emoteID)) {
+						message.reply("Let's start! <@" + value + ">")
+							.then(() => {
+								message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
+							}).catch( err => {
+								console.error("Something went wrong awaiting reactions", err )
+						})
+					}
+				}
 
-		    else:
-		      break
 			})
 	}
 });
