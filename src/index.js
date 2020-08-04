@@ -30,6 +30,7 @@ client.on('ready', () => {
 		},
 		status: 'idle',
 	}).then(() => {
+		console.log("Status set!")
 	});
 
 })
