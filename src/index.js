@@ -86,48 +86,51 @@ client.on('message', async message => {
 									const collector = message.createReactionCollector(roundone, {
 										// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 60 Seconds
 										max: 1,
-										maxUsers: 2,
-										time: 10000
+										maxUsers: 1,
+										time: 5000
 									})
 
 									collector.on("collect", () => {
 										function ball() {
-											// Generates a random number from 0 to players.length
-											let num = Math.floor(Math.random() * (players.length));
-											console.log(num);
+											setTimeout(function () {
+												// Generates a random number from 0 to players.length
+												let num = Math.floor(Math.random() * (players.length));
+												console.log(num);
 
-											//sends a message with the beach ball emote and pings a player
-											message.channel.send(`<:BeachBall:739941658639990866> ${(players[num].toString()).slice(19)}`).then(message => {
-												// Reacts the message with hands
-												message.react(config.emoteID).then(() => {
-
-													// Makes a filter that allows the hand emoji and only form the player that was randomly picked
-													const handfilter = (reaction, user) => {
-														return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' && user.id === (players[num].toString()).substr(0, 18)
-													}
-
-													// Creates
-													const collector = message.createReactionCollector(handfilter, {
-														// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 10 Seconds
-														max: 2,
-														maxUsers: 2,
-														time: 10000
-													})
-
-													//on collection play again
-													collector.on("collect", () => {
-														ball()
-													})
-
-													// When the 10s ends
-													collector.on("end", () => {
-														if (collector.users.size === 0) {
-															lock = false
-															return message.channel.send(`${(players[num].toString()).slice(19)} got hit in the head!`);
+												//sends a message with the beach ball emote and pings a player
+												message.channel.send(`<:BeachBall:739941658639990866> ${(players[num].toString()).slice(19)}`).then(message => {
+													// Reacts the message with hands
+													message.react(config.emoteID).then(() => {
+														// Keeping the lock locked
+														lock = true
+														// Makes a filter that allows the hand emoji and only form the player that was randomly picked
+														const handfilter = (reaction, user) => {
+															return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' && user.id === (players[num].toString()).substr(0, 18)
 														}
+
+														// Creates
+														const collector = message.createReactionCollector(handfilter, {
+															// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 10 Seconds
+															max: 1,
+															maxUsers: 1,
+															time: 5000
+														})
+
+														//on collection play again
+														collector.on("collect", () => {
+															ball()
+														})
+
+														// When the 10s ends
+														collector.on("end", () => {
+															if (collector.users.size === 0) {
+																lock = false
+																return message.channel.send(`${(players[num].toString()).slice(19)} got hit in the head!`);
+															}
+														})
 													})
 												})
-											})
+											}, Math.floor(Math.random() * (3000)))
 										}
 
 										// This is the game function being used.
