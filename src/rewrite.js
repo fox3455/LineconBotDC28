@@ -113,6 +113,10 @@ client.on('message', async message => {
 													collector.on("collect", () => {
 														ball()
 													})
+													collector.on("end", () => {
+														if (collector.users.size === 0)
+														message.channel.send("this mean that there was most likely a filter problem")
+													})
 												})
 											})
 										}
