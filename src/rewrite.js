@@ -5,10 +5,9 @@ const Discord = require('discord.js');
 const config = require('./config.json')
 
 // Create client
-
 const client = new Discord.Client();
 
-
+// Triggers when the bot is logged in and
 client.on('ready', () => {
 	//logs when the bot comes online
 	console.info(
@@ -52,24 +51,36 @@ client.on('message', async message => {
 
 		// Makes a message saying Who wants to play?
 		message.channel.send("who wants to play a game?")
-			.then( message => {
+			.then(message => {
 				// Reacts with a beach ball
-				message.react("740294983982252203").then((reaction) => {
-					const collector = new message.createReactionCollector( beachballfilter, {
-						maxEmojis: 1,
-						max: 25,
-						maxUsers: 25,
-						time: 60000
-					})
+				message.react("739941658639990866")
+					.then((reaction) => {
+						// Collects reactions on the previous message
+						const beachballfilter = (reaction, user) => {
+							return reaction.emoji.id === '739941658639990866' && user.id !== '223215601638703105'
+						}
+						const collector = message.createReactionCollector(beachballfilter, {
+							// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 60 Seconds
+							max: 25,
+							maxUsers: 25,
+							time: 10000
+						})
 
-					//
-					let players
-					// Triggers when someone joins the react
-					collector.on("collect", (reaction) => {
-					players = reaction.users.fetch({limit: 100})
-					})
+						let players
+						// Triggers when someone joins the react
+						collector.on("end", (Collected) => {
+							let players = Array.from(collector.users)
 
-				})
+
+							console.log(players)
+							console.log(players.length)
+
+							message.channel.send(`<:BeachBall:739941658639990866> ${players[0]}`)
+
+
+						})
+
+					})
 
 			})
 	}
