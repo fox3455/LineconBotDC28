@@ -78,7 +78,7 @@ client.on('message', async message => {
 							message.channel.send(`<:BeachBall:739941658639990866> ${(players[0].toString()).slice(19)}`).then(message => {
 								message.react(config.emoteID).then(() => {
 									const roundone = (reaction, user) => {
-										return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' //&& reaction.user === players[0]
+										return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' &&  user.id === (players[0].toString()).substr(0,18)
 									}
 									const collector = message.createReactionCollector(roundone, {
 										// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 60 Seconds
@@ -100,7 +100,7 @@ client.on('message', async message => {
 
 													// Makes a filter that allows the hand emoji and only form the player that was randomly picked
 													const handfilter = (reaction, user) => {
-														return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' //&& reaction.user === players[num]
+														return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' && user.id === (players[num].toString()).substr(0,18)
 													}
 													const collector = message.createReactionCollector(handfilter, {
 														// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 60 Seconds
@@ -124,7 +124,6 @@ client.on('message', async message => {
 										}
 										ball()
 									})
-
 									collector.on("end", () => {
 										message.channel.send("Ouch!")
 										console.log(Array.from(collector.users))
