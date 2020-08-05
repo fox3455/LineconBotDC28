@@ -27,6 +27,9 @@ client.on('ready', () => {
 
 })
 
+// Makes a lock variable
+let lock = false;
+
 client.on('message', async message => {
 	// Message processing
 
@@ -46,12 +49,13 @@ client.on('message', async message => {
 
 	// The main function of this bot. To play games!
 	if (command === "play") {
-		//making the filters for the collectors
-
+		// Makes it so one game at a time
+		if (lock === true) return
 
 		// Makes a message saying Who wants to play?
 		message.channel.send("who wants to play a game?")
 			.then(message => {
+				lock = true
 				// Reacts with a beach ball
 				message.react("739941658639990866")
 					.then(() => {
@@ -71,18 +75,17 @@ client.on('message', async message => {
 						collector.on("end", () => {
 							const players = Array.from(collector.users)
 
-
 							console.log(players)
 							console.log(players.length + " players")
 
 							message.channel.send(`<:BeachBall:739941658639990866> ${(players[0].toString()).slice(19)}`).then(message => {
 								message.react(config.emoteID).then(() => {
 									const roundone = (reaction, user) => {
-										return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' &&  user.id === (players[0].toString()).substr(0,18)
+										return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' && user.id === (players[0].toString()).substr(0, 18)
 									}
 									const collector = message.createReactionCollector(roundone, {
 										// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 60 Seconds
-										max: 2,
+										max: 1,
 										maxUsers: 2,
 										time: 10000
 									})
@@ -100,10 +103,12 @@ client.on('message', async message => {
 
 													// Makes a filter that allows the hand emoji and only form the player that was randomly picked
 													const handfilter = (reaction, user) => {
-														return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' && user.id === (players[num].toString()).substr(0,18)
+														return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' && user.id === (players[num].toString()).substr(0, 18)
 													}
+
+													// Creates
 													const collector = message.createReactionCollector(handfilter, {
-														// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 60 Seconds
+														// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 10 Seconds
 														max: 2,
 														maxUsers: 2,
 														time: 10000
@@ -114,28 +119,30 @@ client.on('message', async message => {
 														ball()
 													})
 
+													// When the 10s ends
 													collector.on("end", () => {
 														if (collector.users.size === 0) {
-															message.channel.send("Ouch")
+															lock = false
+															return message.channel.send(`${(players[num].toString()).slice(19)} got hit in the head!`);
 														}
 													})
 												})
 											})
 										}
+
+										// This is the game function being used.
 										ball()
 									})
 									collector.on("end", () => {
-										message.channel.send("Ouch!")
-										console.log(Array.from(collector.users))
+										if (collector.users.size === 0) {
+											lock = false;
+											return message.channel.send(`Somehow ${(players[0].toString()).slice(19)} got hit.`);
+										}
 									})
 								})
 							})
-
-
 						})
-
 					})
-
 			})
 	}
 });
