@@ -54,7 +54,7 @@ client.on('message', async message => {
 			.then(message => {
 				// Reacts with a beach ball
 				message.react("739941658639990866")
-					.then((reaction) => {
+					.then(() => {
 						// Collects reactions on the previous message
 						const beachballfilter = (reaction, user) => {
 							return reaction.emoji.id === '739941658639990866' && user.id !== '223215601638703105'
@@ -66,16 +66,66 @@ client.on('message', async message => {
 							time: 10000
 						})
 
-						let players
+
 						// Triggers when someone joins the react
-						collector.on("end", (Collected) => {
-							let players = Array.from(collector.users)
+						collector.on("end", () => {
+							const players = Array.from(collector.users)
 
 
 							console.log(players)
-							console.log(players.length)
+							console.log(players.length + " players")
 
-							message.channel.send(`<:BeachBall:739941658639990866> ${players[0]}`)
+							message.channel.send(`<:BeachBall:739941658639990866> ${(players[0].toString()).slice(19)}`).then(message => {
+								message.react(config.emoteID).then( () => {
+									const roundone = (reaction, user) => {
+										return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' //&& user === players[0]
+									}
+									const collector = message.createReactionCollector(roundone, {
+										// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 60 Seconds
+										max: 2,
+										maxUsers: 2,
+										time: 10000
+									})
+
+									collector.on("collect", () => {
+										function ball() {
+											// Generates a random number from 0 to players.length
+											let num = Math.floor(Math.random() * (players.length));
+											console.log(num)
+
+											//sends a message with the beach ball emote and pings a player
+											message.channel.send(`<:BeachBall:739941658639990866> ${(players[num].toString()).slice(19)}`).then(message => {
+												// Reacts the message with hands
+												message.react(config.emoteID).then(() => {
+
+													// Makes a filter that allows the hand emoji and only form the player that was randomly picked
+													const handfilter = (reaction, user) => {
+														return reaction.emoji.id === config.emoteID && user.id !== '223215601638703105' //&& reaction.user === players[num]
+													}
+													const collector = message.createReactionCollector(handfilter, {
+														// Sets the maximums to 1 type of emoji, 25 reactions, 25 users, in 60 Seconds
+														max: 2,
+														maxUsers: 2,
+														time: 10000
+													})
+
+													//on collection play again
+													collector.on("collect", () => {
+														ball()
+													})
+												})
+											})
+										}
+
+										ball()
+									})
+
+									collector.on("end", () => {
+										message.channel.send("Ouch!")
+										console.log(Array.from(collector.users))
+									})
+								})
+							})
 
 
 						})
