@@ -11,10 +11,8 @@ const client = new Discord.Client();
 client.on('ready', () => {
 	//logs when the bot comes online
 	console.info(
-		`Bot has started, with ${client.users.cache.size} users, in \
-      ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`);
-
-	// Sits bots status to "Playing with beachballs"
+		'Bot has started, with' + client.users.cache.size + 'users, in ' + client.channels.cache.size + 'channels of ' + client.guilds.cache.size + ' guilds.');
+	// Sets bots status to "Playing with beachballs"
 	client.user.setPresence({
 		activity: {
 			name: `with beachballs`,
@@ -78,7 +76,7 @@ client.on('message', async message => {
 							console.log(players)
 							console.log(players.length + " players")
 
-							message.channel.send(`<:BeachBall:739941658639990866> ${(players[0].toString()).slice(19)}`).then(message => {
+							message.channel.send('<:BeachBall:739941658639990866> ' + (players[0].toString()).slice(19)).then(message => {
 								message.react(config.emoteID).then(() => {
 									const roundone = (reaction, user) => {
 										return reaction.emoji.name === config.emoteID && user.id !== '223215601638703105' && user.id === (players[0].toString()).substr(0, 18)
@@ -98,7 +96,7 @@ client.on('message', async message => {
 												console.log(num);
 
 												//sends a message with the beach ball emote and pings a player
-												message.channel.send(`<:BeachBall:739941658639990866> ${(players[num].toString()).slice(19)}`).then(message => {
+												message.channel.send('<:BeachBall:739941658639990866> ' + (players[num].toString()).slice(19)).then(message => {
 													// Reacts the message with hands
 													message.react(config.emoteID).then(() => {
 														// Keeping the lock locked
@@ -125,7 +123,7 @@ client.on('message', async message => {
 														collector.on("end", () => {
 															if (collector.users.size === 0) {
 																lock = false
-																return message.channel.send(`${(players[num].toString()).slice(19)} got hit in the head!`);
+																return message.channel.send((players[num].toString()).slice(19)+ ' got hit in the head!');
 															}
 														})
 													})
@@ -139,7 +137,7 @@ client.on('message', async message => {
 									collector.on("end", () => {
 										if (collector.users.size === 0) {
 											lock = false;
-											return message.channel.send(`Somehow ${(players[0].toString()).slice(19)} got hit.`);
+											return message.channel.send('Somehow ' + (players[0].toString()).slice(19) + ' got hit.');
 										}
 									})
 								})
