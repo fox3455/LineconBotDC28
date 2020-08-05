@@ -11,10 +11,6 @@ let value = players[Math.floor(Math.random() * players.length)];
 // Create client
 const client = new Discord.Client();
 
-// Filter for filtering out only the beach ball emote
-const filter = (reaction) => {
-	return reaction.emoji.id === config.emoteID;
-};
 
 client.on('ready', () => {
 	//logs when the bot comes online
@@ -56,6 +52,11 @@ client.on('message', async message => {
 	// The main function of this bot. To play games!
 	if (command === 'play') {
 
+		// Filter for filtering out only the beach ball emote
+		const filter = (reaction) => {
+			return reaction.emoji.id === config.emoteID && !(message.author.bot);
+		};
+
 		const emote = client.emojis.cache.get(config.emoteID)
 
 		message.channel.send("Who wants to play with the beach ball?")
@@ -66,7 +67,7 @@ client.on('message', async message => {
 						console.error('Something went wrong', err)
 					})
 
-				message.awaitReactions(filter, {max: 25, time: 60000, errors: ['time']})
+				message.awaitReactions(filter, {max: 25, time: 300000, errors: ['time']})
 					.then(collected => {
 						const reaction = collected.first();
 						if (reaction.emoji === emote) {
@@ -75,49 +76,70 @@ client.on('message', async message => {
 					})
 			})
 			.catch((err) => {
-					console.error("Something went wrong!", err)
-					return message.channel.send("Something went wrong..."
-					)
-				}
-			)
-
-		// going to change this to an on. statement and try making it more "JS" I think I see where you are going.
-
-
-		//This will start passing the ball
-
-		function ball(message) {
-			message.reply(`${emote} ${value}`)
-				.then(() => {
-					message.react('config.emoteID')
-				})
-				.catch((err) => {
-					console.error("something went wrong!", err)
-					return message.channel.send("Something went wrong... I couldn't react.")
-				})
-		}
-
-		//message.reply should start the game and call the first user based on the
-		//random user generator from our array
-		message.reply("Let's start! <@" + value + ">").then(() => {
-		})
-		message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
-			.then(collected => {
-				const reaction = collected.first();
-				//VERY rough while statement should maybe work...? Need to update the bot and see
-				//what happens when it runs since I don't write in JS
-				while (1) {
-					if (reaction.emoji === client.emojis.cache.get(config.emoteID)) {
-						message.reply("Let's start! <@" + value + ">")
-							.then(() => {
-								message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
-							}).catch( err => {
-								console.error("Something went wrong awaiting reactions", err )
-						})
-					}
-				}
-
+				console.error("Something went wrong!", err)
+				return message.channel.send("Something went wrong...")
 			})
+
+		// message.reply should start the game and call the first user.
+		// After that it is based on the random user generator from our array
+
+		setTimeout(() => {
+			message.reply("Let's start!").then(message => {
+				// Initiating ball function
+				function ball() {
+					// In theory sends a message
+					message.channel.send(`${emote} ${value}`)
+						.then(() => {
+							message.react('config.emoteID')
+						})
+
+						.catch((err) => {
+							console.error("something went wrong!", err)
+							return message.channel.send("Something went wrong... I couldn't react.")
+						})
+				}
+
+				message.react(config.emoteID)
+					.then(() => {
+						const collector = message.createReactionCollector(filter, {
+							max: 2,
+							time: 30000,
+							errors: ['time']
+						})
+
+						collector.on("collect", () => {
+							ball();
+						})
+					})
+
+
+				// const collector = message.createReactionCollector(filter, {max: 1, time: 30000, errors: ['time']})
+				//
+				// collector.on("collect", () => {
+				// 	ball();
+				// })
+				// 		message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
+				// 			.then(collected => {
+				// 				const reaction = collected.first();
+				// 				//VERY rough while statement should maybe work...? Need to update the bot and see
+				// 				//what happens when it runs since I don't write in JS
+				// 				while (true) {
+				// 					if (reaction.emoji === client.emojis.cache.get(config.emoteID)) {
+				// 							message.reply("Let's start!")
+				// 							.then(() => {
+				// 								message.awaitReactions(filter, {max: 1, time: 30000, errors: ['time']})
+				// 							}).catch(err => {
+				// 							console.error("Something went wrong awaiting reactions", err)
+				// 						})
+				// 					}
+				// 					else {
+				// 						return message.channel.send("Ouch!")
+				// 					}
+				// 				}
+			})
+			// 	})
+		}, 10000)
+
 	}
 });
 
