@@ -1,6 +1,6 @@
 {
   "name": "linecon-bot",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "A fun bot for the DEF CON 28 discord server",
   "main": "src/index.js",
   "scripts": {
