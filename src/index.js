@@ -32,8 +32,8 @@ client.on('message', async message => {
 	// Message processing
 
 	// Only can be used in #linecon
-	// let okchannel = client.channels.cache.get("710574818222931968")
-	// if (!(message.channel === okchannel)) return;
+	let okchannel = client.channels.cache.get("710574818222931968")
+	if (!(message.channel === okchannel)) return;
 
 	// Discards messages from bots
 	if (message.author.bot) return;
@@ -75,6 +75,7 @@ client.on('message', async message => {
 
 							console.log(players)
 							console.log(players.length + " players")
+
 
 							message.channel.send('<:BeachBall:739941658639990866> ' + (players[0].toString()).slice(19)).then(message => {
 								message.react(config.emoteID).then(() => {
