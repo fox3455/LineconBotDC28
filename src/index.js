@@ -1,6 +1,6 @@
 // Load up the libraries
 const Discord = require('discord.js');
-
+const _ = require('lodash');
 // Importing config
 const config = require('./config.json')
 
@@ -25,15 +25,12 @@ client.on('ready', () => {
 
 })
 
-// Makes a lock variable
-let lock = false;
+// List of channels with currently ongoing games
+let lock = [];
 
 client.on('message', async message => {
 	// Message processing
 
-	// Only can be used in #linecon
-	let okchannel = client.channels.cache.get("710574818222931968")
-	if (!(message.channel === okchannel)) return;
 
 	// Discards messages from bots
 	if (message.author.bot) return;
@@ -48,12 +45,12 @@ client.on('message', async message => {
 	// The main function of this bot. To play games!
 	if (command === "play") {
 		// Makes it so one game at a time
-		if (lock === true) return
+		if (lock.includes(message.channel.id)) return
 
 		// Makes a message saying Who wants to play?
 		message.channel.send("who wants to play a game?")
 			.then(message => {
-				lock = true
+				lock.push(message.channel.id)
 				// Reacts with a beach ball
 				message.react("739941658639990866")
 					.then(() => {
@@ -123,8 +120,8 @@ client.on('message', async message => {
 														// When the 10s ends
 														collector.on("end", () => {
 															if (collector.users.size === 0) {
-																lock = false
-																return message.channel.send((players[num].toString()).slice(19)+ ' got hit in the head!');
+																_.pull(lock, message.channel.id)
+																return message.channel.send((players[num].toString()).slice(19) + ' got hit in the head!');
 															}
 														})
 													})
@@ -137,7 +134,7 @@ client.on('message', async message => {
 									})
 									collector.on("end", () => {
 										if (collector.users.size === 0) {
-											lock = false;
+											_.pull(lock, message.channel.id)
 											return message.channel.send('Somehow ' + (players[0].toString()).slice(19) + ' got hit.');
 										}
 									})
