@@ -26,12 +26,11 @@ client.on('ready', () => {
 })
 
 // List of channels with currently ongoing games
-let lock = [];
+let lock = [''];
 
 client.on('message', async message => {
+
 	// Message processing
-
-
 	// Discards messages from bots
 	if (message.author.bot) return;
 
@@ -44,6 +43,7 @@ client.on('message', async message => {
 
 	// The main function of this bot. To play games!
 	if (command === "play") {
+
 		// Makes it so one game at a time
 		if (lock.includes(message.channel.id)) return
 
